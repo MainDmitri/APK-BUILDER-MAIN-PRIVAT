@@ -5,7 +5,8 @@ enum PromptAppType {
   webService('web-service', 'Веб-сервис / PWA-клиент', 'Клиент для сайта, дашборд, клиент REST API'),
   game('game', '2D Canvas / WebGL игра', 'Phaser, Three.js, чистый Canvas'),
   nativeAndroid('native', 'Нативный Android-проект', 'Камера, датчики, сервисы на Kotlin'),
-  nodeSpa('node-spa', 'Node.js SPA', 'React или Vue + Vite + Tailwind');
+  nodeSpa('node-spa', 'Node.js SPA', 'React или Vue + Vite + Tailwind'),
+  flutter('flutter', 'Flutter: Android + iPhone', 'Нативное приложение на Dart, один код для обеих платформ');
 
   const PromptAppType(this.id, this.title, this.examples);
 
@@ -14,6 +15,38 @@ enum PromptAppType {
   final String examples;
 
   bool get isNative => this == PromptAppType.nativeAndroid;
+  bool get isFlutter => this == PromptAppType.flutter;
+
+  /// HTML/JS projects running in the WebView shell.
+  bool get usesWebView => !isNative && !isFlutter;
+}
+
+/// Language / technology the AI writes the app in (first choice of the
+/// prompt wizard). Maps onto [PromptAppType] and [SpaFramework].
+enum PromptTech {
+  javascript('HTML + JavaScript', 'Без сборки: утилиты, клиенты сайтов и API, игры на Canvas / Phaser / Three.js',
+      iphone: true),
+  react('React (JavaScript)', 'React 19 + Vite + Tailwind CSS: сложные интерфейсы, много экранов', iphone: true),
+  vue('Vue (JavaScript)', 'Vue 3 + Vite + Tailwind CSS: сложные интерфейсы, много экранов', iphone: true),
+  flutter('Flutter (Dart)', 'Нативное приложение: один код, быстрый интерфейс, плагины', iphone: true),
+  kotlin('Kotlin', 'Нативный Android: Jetpack Compose или XML-разметка, полный доступ к Android API', iphone: false);
+
+  const PromptTech(this.title, this.description, {required this.iphone});
+
+  final String title;
+  final String description;
+
+  /// Can also be built as an .ipa for iPhone.
+  final bool iphone;
+
+  String get platforms => iphone ? 'Android и iPhone' : 'только Android';
+
+  static PromptTech of(PromptConfig c) => switch (c.appType) {
+        PromptAppType.nodeSpa => c.spaFramework == SpaFramework.react ? react : vue,
+        PromptAppType.flutter => flutter,
+        PromptAppType.nativeAndroid => kotlin,
+        PromptAppType.utility || PromptAppType.webService || PromptAppType.game => javascript,
+      };
 }
 
 enum GameEngine {
