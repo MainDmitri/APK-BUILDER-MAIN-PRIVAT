@@ -9,6 +9,7 @@ import '../config.dart';
 import '../process_runner.dart';
 import '../workspace.dart';
 import 'gradle_stage.dart';
+import 'ios_shell.dart';
 import 'native_sources.dart';
 import 'node_stage.dart';
 import 'signer.dart';
@@ -35,6 +36,38 @@ class BuildRequest {
   /// Launcher icon picture chosen by the user (PNG, JPEG, WebP, GIF, BMP or
   /// SVG); replaces the project's own icon.
   final String? iconPath;
+}
+
+class IosProjectRequest {
+  const IosProjectRequest({
+    required this.zipPath,
+    required this.workDir,
+    required this.projectDir,
+    this.options = const BuildOptions(),
+    this.iconPath,
+  });
+
+  final String zipPath;
+  final String workDir;
+
+  /// Where the Xcode project (XcodeGen `project.yml` + sources) is written.
+  final String projectDir;
+  final BuildOptions options;
+  final String? iconPath;
+}
+
+class IosProjectOutcome {
+  const IosProjectOutcome({required this.app, required this.bundleId, required this.ipaFileName});
+
+  final ResolvedAppConfig app;
+  final String bundleId;
+  final String ipaFileName;
+
+  Map<String, Object?> toJson() => {
+        'bundleId': bundleId,
+        'ipaFileName': ipaFileName,
+        'app': app.toJson(),
+      };
 }
 
 class BuildOutcome {
@@ -94,28 +127,10 @@ class BuildPipeline {
 
     try {
       onStage?.call(BuildStage.extract);
-      log.section('Распаковка и анализ');
-      final skipped = await extractZipSafely(
-        request.zipPath,
-        srcDir,
-        maxBytes: config.maxExtractedBytes,
-        maxEntries: config.maxArchiveEntries,
-      );
-      if (skipped.isNotEmpty) log.add('Пропущены символические ссылки: ${skipped.join(', ')}');
-
-      var analysis = const ProjectAnalyzer().analyze(DirectorySource(srcDir));
+      var analysis = await _extractAndAnalyze(request.zipPath, srcDir, log);
       final projectDir = p.normalize(p.join(srcDir, analysis.rootPrefix));
-      log.add('Тип проекта: ${analysis.kind.title}');
-      for (final w in analysis.warnings) {
-        log.add('⚠ $w');
-      }
       onAnalysis?.call(analysis);
-      if (!analysis.canBuild) {
-        for (final e in analysis.errors) {
-          log.add('✖ $e');
-        }
-        throw BuildFailure('Проект не может быть собран:\n- ${analysis.errors.join('\n- ')}');
-      }
+      if (!analysis.canBuild) _failOnErrors(analysis, log);
 
       // Fail fast on a wrong keystore before spending minutes on Gradle.
       final keystore = request.keystore;
@@ -219,8 +234,8 @@ class BuildPipeline {
       }
 
       final baseName = analysis.kind == ProjectKind.nativeGradle
-          ? (request.options.appName ?? analysis.native?.applicationId?.split('.').last ?? 'app')
-          : app.appName;
+          ? latinFileBase(request.options.appName, analysis.native?.applicationId ?? 'app')
+          : latinFileBase(app.appName, app.packageName);
       final version = analysis.kind == ProjectKind.nativeGradle ? (request.options.versionName ?? 'release') : app.versionName;
       final fileName = '${_safeFileName(baseName)}-${_safeFileName(version)}.apk';
       final aligned = p.join(outDir, 'aligned.apk');
@@ -263,10 +278,100 @@ class BuildPipeline {
     }
   }
 
+  /// iOS: analyze → (npm build) → Xcode project of the WebView shell in
+  /// [IosProjectRequest.projectDir]. Compiling the `.ipa` needs macOS with
+  /// Xcode (see .github/scripts/ios-build.sh).
+  Future<IosProjectOutcome> generateIosProject(IosProjectRequest request, BuildLog log) async {
+    final srcDir = p.join(request.workDir, 'src');
+    deleteQuietly(srcDir);
+    deleteQuietly(request.projectDir);
+    Directory(srcDir).createSync(recursive: true);
+    try {
+      var analysis = await _extractAndAnalyze(request.zipPath, srcDir, log);
+      if (!analysis.canBuild) _failOnErrors(analysis, log);
+      if (!analysis.kind.isWeb) {
+        throw BuildFailure('Для iPhone собираются только веб-проекты (HTML/JS, React, Vue, Vite…): '
+            'код Kotlin/Java работает только на Android.');
+      }
+      final projectDir = p.normalize(p.join(srcDir, analysis.rootPrefix));
+      var webRoot = projectDir;
+      if (analysis.kind == ProjectKind.nodeProject) {
+        webRoot = await NodeStage(config, runner: runner).run(projectDir, analysis.node!, log);
+      }
+      final source = DirectorySource(webRoot);
+      final webWarnings = <String>[];
+      final webInfo = ProjectAnalyzer.inspectWebRoot(source.paths.toSet(), source.readText, webWarnings);
+      if (analysis.kind == ProjectKind.nodeProject) {
+        for (final w in webWarnings) {
+          log.add('⚠ $w');
+        }
+        analysis = analysis.withWebRoot(
+          manifest: webInfo.manifest,
+          manifestPath: webInfo.manifestPath,
+          extraWarnings: webWarnings,
+        );
+      }
+      final app = ResolvedAppConfig.resolve(analysis, request.options);
+      _validate(app);
+      if (request.iconPath != null) log.add('Иконка приложения: картинка, выбранная при сборке.');
+      log.section('Генерация iOS-проекта (WKWebView)');
+      final generator = IosShellGenerator(config);
+      await generator.generate(
+        webRoot: webRoot,
+        projectDir: request.projectDir,
+        app: app,
+        webInfo: webInfo,
+        log: log,
+        customIcon: request.iconPath,
+      );
+      final bundleId = IosShellGenerator.bundleId(app.packageName);
+      final baseName = latinFileBase(app.appName, bundleId);
+      return IosProjectOutcome(
+        app: app,
+        bundleId: bundleId,
+        ipaFileName: '${_safeFileName(baseName)}-${_safeFileName(app.versionName)}.ipa',
+      );
+    } finally {
+      if (Platform.environment['APPBUILDER_KEEP_WORKDIR'] != '1') deleteQuietly(srcDir);
+    }
+  }
+
+  Future<ProjectAnalysis> _extractAndAnalyze(String zipPath, String srcDir, BuildLog log) async {
+    log.section('Распаковка и анализ');
+    final skipped = await extractZipSafely(
+      zipPath,
+      srcDir,
+      maxBytes: config.maxExtractedBytes,
+      maxEntries: config.maxArchiveEntries,
+    );
+    if (skipped.isNotEmpty) log.add('Пропущены символические ссылки: ${skipped.join(', ')}');
+    final analysis = const ProjectAnalyzer().analyze(DirectorySource(srcDir));
+    log.add('Тип проекта: ${analysis.kind.title}');
+    for (final w in analysis.warnings) {
+      log.add('⚠ $w');
+    }
+    return analysis;
+  }
+
+  static Never _failOnErrors(ProjectAnalysis analysis, BuildLog log) {
+    for (final e in analysis.errors) {
+      log.add('✖ $e');
+    }
+    throw BuildFailure('Проект не может быть собран:\n- ${analysis.errors.join('\n- ')}');
+  }
+
   static void _validate(ResolvedAppConfig app) {
     final errors = app.validate();
     if (errors.isNotEmpty) throw BuildFailure('Некорректные параметры приложения:\n- ${errors.join('\n- ')}');
   }
+
+  /// Base of the APK / IPA file name: the app name when it is Latin, else the
+  /// last segment of the package. GitHub drops other letters from release
+  /// asset names ("Заметки-1.0.0.apk" would become "-1.0.0.apk").
+  static String latinFileBase(String? appName, String packageName) =>
+      appName != null && RegExp(r'^[A-Za-z0-9 ._-]+$').hasMatch(appName.trim()) && appName.trim().isNotEmpty
+          ? appName.trim()
+          : packageName.split('.').last.replaceAll('_', '-');
 
   static String _safeFileName(String value) {
     final cleaned = value.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '').replaceAll(RegExp(r'\s+'), '-').trim();
