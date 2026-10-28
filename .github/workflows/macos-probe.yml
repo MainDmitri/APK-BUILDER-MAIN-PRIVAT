@@ -1,0 +1,14 @@
+name: macOS probe
+on:
+  push:
+    branches: [macos-probe]
+jobs:
+  probe:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, macos-15, macos-14, macos-26]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - run: sw_vers && xcodebuild -version | sed -n 1p && uname -m
