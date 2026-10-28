@@ -1,0 +1,20 @@
+{
+  "id": "20261028193416-4d1df7",
+  "createdAt": "2026-10-28T19:34:16.610832Z",
+  "projectFileName": "main_scanner_flutter_v6.zip",
+  "options": {
+    "appName": "Main Scanner",
+    "packageName": "com.dahua.checker",
+    "versionName": "2.0.0",
+    "versionCode": 200,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "storage",
+      "notifications"
+    ],
+    "signing": "debug"
+  },
+  "ios": true,
+  "android": false
+}
