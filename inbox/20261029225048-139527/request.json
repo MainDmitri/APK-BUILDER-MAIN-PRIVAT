@@ -1,0 +1,18 @@
+{
+  "id": "20261029225048-139527",
+  "createdAt": "2026-10-29T22:50:48.660877Z",
+  "projectFileName": "faceswap_build.zip",
+  "options": {
+    "appName": "FaceSwap AI",
+    "packageName": "com.faceswap.app",
+    "versionName": "1.0.0",
+    "versionCode": 1,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "storage",
+      "camera"
+    ],
+    "signing": "debug"
+  }
+}
