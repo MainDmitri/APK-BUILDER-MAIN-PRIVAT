@@ -1,0 +1,19 @@
+{
+  "id": "20261030200303-454099",
+  "createdAt": "2026-10-30T20:03:03.832343Z",
+  "projectFileName": "mainscanner_mic_2fa_v6.zip",
+  "options": {
+    "appName": "Main Scanner",
+    "packageName": "com.dahua.checker",
+    "versionName": "3.0.0",
+    "versionCode": 4,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "storage",
+      "notifications"
+    ],
+    "signing": "debug"
+  },
+  "icon": "icon.jpg"
+}
