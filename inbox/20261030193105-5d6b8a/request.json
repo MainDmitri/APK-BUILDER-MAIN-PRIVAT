@@ -1,0 +1,19 @@
+{
+  "id": "20261030193105-5d6b8a",
+  "createdAt": "2026-10-30T19:31:05.945355Z",
+  "projectFileName": "MainScanner_WineDark_v4_FINAL.zip",
+  "options": {
+    "appName": "Main Scanner",
+    "packageName": "com.dahua.checker",
+    "versionName": "3.0.0",
+    "versionCode": 4,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "storage",
+      "notifications"
+    ],
+    "signing": "debug"
+  },
+  "icon": "icon.jpg"
+}
