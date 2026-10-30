@@ -1,0 +1,18 @@
+{
+  "id": "20261030145449-be3c91",
+  "createdAt": "2026-10-30T14:54:50.091340Z",
+  "projectFileName": "flutter_tg_appbuilder.zip",
+  "options": {
+    "appName": "Calculator",
+    "packageName": "com.calc.pro",
+    "versionName": "1.0.0",
+    "versionCode": 1,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "storage",
+      "vibration"
+    ],
+    "signing": "debug"
+  }
+}
