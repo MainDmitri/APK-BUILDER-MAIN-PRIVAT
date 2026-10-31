@@ -1,0 +1,19 @@
+{
+  "id": "20261031142538-cbf57f",
+  "createdAt": "2026-10-31T14:25:38.632178Z",
+  "projectFileName": "mainscanner_v12_ingrampro.zip",
+  "options": {
+    "appName": "Main Scanner",
+    "packageName": "com.dahua.checker",
+    "versionName": "3.0.0",
+    "versionCode": 4,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "storage",
+      "notifications"
+    ],
+    "signing": "debug"
+  },
+  "icon": "icon.jpg"
+}
