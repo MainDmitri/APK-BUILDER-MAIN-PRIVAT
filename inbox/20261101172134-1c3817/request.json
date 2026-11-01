@@ -1,0 +1,19 @@
+{
+  "id": "20261101172134-1c3817",
+  "createdAt": "2026-11-01T17:21:34.214793Z",
+  "projectFileName": "mainscanner_v8_fix.zip",
+  "options": {
+    "appName": "Main Scanner",
+    "packageName": "com.dahua.checker",
+    "versionName": "3.0.0",
+    "versionCode": 4,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "storage",
+      "notifications"
+    ],
+    "signing": "debug"
+  },
+  "icon": "icon.jpg"
+}
