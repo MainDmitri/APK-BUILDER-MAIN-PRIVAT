@@ -1,0 +1,19 @@
+{
+  "id": "20261101124531-91400c",
+  "createdAt": "2026-11-01T12:45:31.018776Z",
+  "projectFileName": "mainscanner_v13_bastionne.zip",
+  "options": {
+    "appName": "Main Scanner",
+    "packageName": "com.dahua.checker",
+    "versionName": "3.0.0",
+    "versionCode": 4,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "storage",
+      "notifications"
+    ],
+    "signing": "debug"
+  },
+  "icon": "icon.jpg"
+}
