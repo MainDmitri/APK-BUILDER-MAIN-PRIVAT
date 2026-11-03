@@ -1,0 +1,21 @@
+{
+  "id": "20261103085150-ad9848",
+  "createdAt": "2026-11-03T08:51:50.676191Z",
+  "projectFileName": "darlin (2).zip",
+  "options": {
+    "appName": "Дарлин",
+    "packageName": "com.dk.darlin",
+    "versionName": "1.1.0",
+    "versionCode": 5,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "microphone",
+      "notifications",
+      "vibration",
+      "storage"
+    ],
+    "signing": "debug"
+  },
+  "icon": "icon.jpg"
+}
