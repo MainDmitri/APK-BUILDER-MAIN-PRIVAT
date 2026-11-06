@@ -1,0 +1,17 @@
+{
+  "id": "20261106213844-cb4870",
+  "createdAt": "2026-11-06T21:38:44.547354Z",
+  "projectFileName": "AliceBTRemote-v1.3.zip",
+  "options": {
+    "appName": "Алиса Пульт BT",
+    "packageName": "com.example.aliceremote",
+    "versionName": "1.3.0",
+    "versionCode": 3,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "location"
+    ],
+    "signing": "debug"
+  }
+}
