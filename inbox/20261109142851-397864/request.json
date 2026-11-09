@@ -1,0 +1,21 @@
+{
+  "id": "20261109142851-397864",
+  "createdAt": "2026-11-09T14:28:51.249878Z",
+  "projectFileName": "pulti-tool_v2.4_full.zip",
+  "options": {
+    "appName": "Пульт Тул",
+    "packageName": "com.pultitool.remote",
+    "versionName": "2.4.0",
+    "versionCode": 6,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "wifi",
+      "vibration",
+      "storage",
+      "notifications"
+    ],
+    "signing": "debug"
+  },
+  "icon": "icon.jpg"
+}
