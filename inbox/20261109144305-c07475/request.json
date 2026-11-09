@@ -1,0 +1,20 @@
+{
+  "id": "20261109144305-c07475",
+  "createdAt": "2026-11-09T14:43:05.938879Z",
+  "projectFileName": "pulti-tool_v2.5_adb_tab.zip",
+  "options": {
+    "appName": "Пульт Тул",
+    "packageName": "com.pultitool.remote",
+    "versionName": "2.5.0",
+    "versionCode": 8,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "wifi",
+      "vibration",
+      "storage"
+    ],
+    "signing": "debug"
+  },
+  "icon": "icon.jpg"
+}
