@@ -1,0 +1,18 @@
+{
+  "id": "20261111014114-8855d2",
+  "createdAt": "2026-11-11T01:41:14.653070Z",
+  "projectFileName": "TGBotClientPro-1.4.1-serverless (1).zip",
+  "options": {
+    "appName": "TG Bot Client Pro",
+    "packageName": "com.example.tgbotclient",
+    "versionName": "1.4.1",
+    "versionCode": 7,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "notifications",
+      "storage"
+    ],
+    "signing": "debug"
+  }
+}
