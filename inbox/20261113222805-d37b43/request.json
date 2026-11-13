@@ -1,0 +1,23 @@
+{
+  "id": "20261113222805-d37b43",
+  "createdAt": "2026-11-13T22:28:06.245699Z",
+  "projectFileName": "game.zip",
+  "options": {
+    "appName": "City Drive 3D",
+    "packageName": "com.manjo.citydrive3d",
+    "versionName": "1.0.0",
+    "versionCode": 1,
+    "orientation": "landscape",
+    "permissions": [
+      "vibration"
+    ],
+    "signing": "debug",
+    "pullToRefresh": false,
+    "keepScreenOn": true,
+    "allowZoom": false,
+    "clearCacheOnStart": false,
+    "splashEnabled": false,
+    "splashTitle": "City Drive 3D"
+  },
+  "icon": "icon.jpeg"
+}
