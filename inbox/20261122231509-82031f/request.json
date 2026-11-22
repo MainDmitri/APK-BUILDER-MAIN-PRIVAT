@@ -1,0 +1,24 @@
+{
+  "id": "20261122231509-82031f",
+  "createdAt": "2026-11-22T23:15:11.171911Z",
+  "projectFileName": "index.zip",
+  "options": {
+    "appName": "Управление Мини-Бизнес",
+    "packageName": "com.appbuilder.myapp",
+    "versionName": "1.4.0",
+    "versionCode": 1,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "storage"
+    ],
+    "signing": "debug",
+    "pullToRefresh": false,
+    "keepScreenOn": true,
+    "allowZoom": false,
+    "clearCacheOnStart": false,
+    "splashEnabled": false,
+    "splashTitle": "My App"
+  },
+  "icon": "icon.png"
+}
