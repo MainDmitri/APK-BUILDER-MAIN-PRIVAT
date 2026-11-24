@@ -1,0 +1,19 @@
+{
+  "id": "20261124224224-85cf77",
+  "createdAt": "2026-11-24T22:42:24.755679Z",
+  "projectFileName": "wikkeo-poster-appbuilder-v2.2.zip",
+  "options": {
+    "appName": "Wikkeo Poster",
+    "packageName": "com.maindmitri.wikkeoposter",
+    "versionName": "2.2.0",
+    "versionCode": 16,
+    "orientation": "portrait",
+    "permissions": [
+      "internet",
+      "notifications",
+      "storage"
+    ],
+    "signing": "debug"
+  },
+  "icon": "icon.jpeg"
+}
